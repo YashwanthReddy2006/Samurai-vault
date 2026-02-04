@@ -43,10 +43,10 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
-# Add CORS middleware
+# Add CORS middleware - allow all origins for browser extension support
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=["*"],  # Allow all origins for browser extension
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

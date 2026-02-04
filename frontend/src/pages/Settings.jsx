@@ -113,7 +113,7 @@ const Settings = () => {
                             <span className="setting-label">Logout</span>
                             <span className="setting-desc">Sign out of your account</span>
                         </div>
-                        <button className="btn btn-secondary btn-sm" onClick={logout}>
+                        <button className="btn btn-secondary btn-sm" onClick={async () => await logout()}>
                             Logout
                         </button>
                     </div>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamuraiVault</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="popup">
+        <div class="header">
+            <span class="logo">⚔️</span>
+            <span class="title">SamuraiVault</span>
+        </div>
+
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <p class="subtitle">Login to save passwords</p>
+            <form id="login-form">
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="your@email.com">
+                </div>
+                <div class="field">
+                    <label for="password">Master Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+            </form>
+            <p class="error" id="error-msg"></p>
+        </div>
+
+        <!-- Logged In View -->
+        <div id="logged-in-view" class="view hidden">
+            <div class="user-info">
+                <div class="avatar" id="user-avatar">U</div>
+                <div class="user-details">
+                    <span class="username" id="username">User</span>
+                    <span class="email" id="user-email">user@email.com</span>
+                </div>
+            </div>
+            <div class="status">
+                <span class="status-dot connected"></span>
+                <span>Connected to SamuraiVault</span>
+            </div>
+            <p class="info-text">
+                Passwords will be automatically detected when you log into websites.
+            </p>
+            <button class="btn btn-secondary" id="logout-btn">Logout</button>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>
