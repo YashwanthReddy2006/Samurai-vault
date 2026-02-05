@@ -24,6 +24,21 @@ export const authApi = {
             localStorage.setItem('access_token', response.access_token);
             // Store master password in session for vault encryption
             sessionStorage.setItem('master_password', masterPassword);
+
+            // Sync to Chrome extension if available
+            try {
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+                    // Try to send to extension - extension ID will be different in production
+                    // This uses the externally_connectable feature
+                    window.postMessage({
+                        type: 'SAMURAI_VAULT_LOGIN',
+                        access_token: response.access_token,
+                        master_password: masterPassword
+                    }, '*');
+                }
+            } catch (e) {
+                console.log('Extension sync not available');
+            }
         }
 
         return response;

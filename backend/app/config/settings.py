@@ -43,7 +43,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5174",
         "http://127.0.0.1:5175",
         "http://127.0.0.1:3000",
+        # Production origins - will be updated after deployment
+        "https://*.onrender.com",
     ]
+    ALLOW_ALL_ORIGINS: bool = os.getenv("ALLOW_ALL_ORIGINS", "false").lower() == "true"
     
     class Config:
         env_file = ".env"

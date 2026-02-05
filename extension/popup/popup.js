@@ -43,7 +43,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(response.error || 'Login failed');
             }
         } catch (error) {
-            errorMsg.textContent = error.message;
+            // Check if MFA is required - redirect to website for MFA login
+            if (error.message === 'MFA code required') {
+                errorMsg.style.color = '#d4a574'; // Gold color for info
+                errorMsg.textContent = 'MFA required. Opening website login...';
+                // Open website login page in a new tab
+                setTimeout(() => {
+                    chrome.tabs.create({ url: 'http://localhost:5174/login' });
+                }, 500);
+            } else {
+                errorMsg.style.color = '#ef4444'; // Red color for error
+                errorMsg.textContent = error.message;
+            }
             loginBtn.disabled = false;
             loginBtn.textContent = 'Login';
         }

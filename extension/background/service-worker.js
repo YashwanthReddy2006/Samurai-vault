@@ -59,24 +59,33 @@ async function apiRequest(endpoint, options = {}) {
         throw new Error('Authentication expired. Please log in again.');
     }
 
+    // Parse JSON once
+    const data = await response.json();
+
     if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.detail || 'Request failed');
     }
 
-    return response.json();
+    return data;
 }
 
 /**
  * Login to SamuraiVault
  */
-async function login(email, password) {
+async function login(email, password, mfaCode = null) {
+    console.log('Login attempt:', { email, hasPassword: !!password, mfaCode });
+
+    const body = {
+        email: email,
+        master_password: password,
+        mfa_code: mfaCode
+    };
+
+    console.log('Request body:', JSON.stringify(body));
+
     const response = await apiRequest('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({
-            email: email,
-            master_password: password
-        })
+        body: JSON.stringify(body)
     });
 
     if (response.access_token) {
@@ -128,7 +137,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         try {
             switch (message.action) {
                 case 'login':
-                    return await login(message.email, message.password);
+                    return await login(message.email, message.password, message.mfaCode);
 
                 case 'logout':
                     return await logout();
@@ -138,6 +147,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                 case 'savePassword':
                     await savePassword(message.data);
+                    return { success: true };
+
+                case 'syncLogin':
+                    // Sync credentials from website login
+                    await saveAuthData(message.access_token, message.master_password);
+                    console.log('Synced login credentials from website');
                     return { success: true };
 
                 default:

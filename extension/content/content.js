@@ -246,16 +246,17 @@
         chrome.runtime.sendMessage({
             action: 'savePassword',
             data: {
-                site_name: site,
+                title: site,  // API expects 'title' not 'site_name'
                 url: url,
                 username: username,
-                password: password
+                password: password,
+                category: 'website'  // Default category
             }
         }, (response) => {
             if (response && response.success) {
                 showToast('Password saved to SamuraiVault!', 'success');
             } else {
-                showToast(response?.error || 'Failed to save password', 'error');
+                showToast(response?.error || 'Failed to save password. Are you logged in?', 'error');
             }
             removeSavePrompt();
         });
@@ -374,6 +375,26 @@
         chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             if (message.action === 'checkLoginStatus') {
                 sendResponse({ hasPasswordForms: findPasswordFields().length > 0 });
+            }
+        });
+
+        // Listen for login sync from website (for MFA users)
+        window.addEventListener('message', (event) => {
+            // Only accept messages from the same origin
+            if (event.source !== window) return;
+
+            if (event.data && event.data.type === 'SAMURAI_VAULT_LOGIN') {
+                // Sync credentials to extension storage
+                chrome.runtime.sendMessage({
+                    action: 'syncLogin',
+                    access_token: event.data.access_token,
+                    master_password: event.data.master_password
+                }, (response) => {
+                    if (response && response.success) {
+                        console.log('SamuraiVault: Extension synced with website login');
+                        showToast('Extension synced with website login!', 'success');
+                    }
+                });
             }
         });
     }

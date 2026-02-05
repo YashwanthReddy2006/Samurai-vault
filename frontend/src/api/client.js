@@ -31,9 +31,9 @@ class ApiClient {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        // Add master password for vault AND analytics operations
+        // Add master password for vault, analytics, AND mfa operations
         const masterPassword = this.getMasterPassword();
-        if (masterPassword && (endpoint.includes('/vault') || endpoint.includes('/analytics'))) {
+        if (masterPassword && (endpoint.includes('/vault') || endpoint.includes('/analytics') || endpoint.includes('/mfa'))) {
             headers['X-Master-Password'] = masterPassword;
         }
 
